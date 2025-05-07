@@ -5,7 +5,8 @@
   "type": "module",
   "bin": {
     "agency-linear": "build/index.js",
-    "cursor-setup": "setup.js"
+    "cursor-setup": "setup.js",
+    "mcp-install": "install-linear-mcp.sh"
   },
   "files": [
     "build",
@@ -20,7 +21,7 @@
     "publish:patch": "npm version patch && npm publish",
     "publish:minor": "npm version minor && npm publish",
     "publish:major": "npm version major && npm publish",
-    "postinstall": "echo '\n🚀 To configure Cursor for agency-linear, run: npx cursor-setup\n'"
+    "postinstall": "echo '\n🚀 To configure Cursor for agency-linear, you can either:\n  - Run: npx cursor-setup (interactive setup)\n  - Run: npx mcp-install (script-based setup)\n'"
   },
   "dependencies": {
     "@linear/sdk": "37.0.0",
