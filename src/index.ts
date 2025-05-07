@@ -59,6 +59,7 @@ const server = new Server(
         delete_label: true,
         list_users: true,
         get_user: true,
+        get_current_user: true,
         create_team: true,
         update_team: true,
         delete_team: true,
@@ -385,6 +386,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           },
         },
         required: ["userId"],
+      },
+    },
+    {
+      name: "get_current_user",
+      description: "Get information about the currently authenticated user (API key owner)",
+      inputSchema: {
+        type: "object",
+        properties: {
+          random_string: {
+            type: "string",
+            description: "Dummy parameter for no-parameter tools",
+          },
+        },
+        required: ["random_string"],
       },
     },
     {
@@ -730,6 +745,10 @@ type ListUsersArgs = {
 
 type GetUserArgs = {
   userId: string;
+};
+
+type GetCurrentUserArgs = {
+  random_string: string;
 };
 
 type CreateTeamArgs = {
@@ -1659,6 +1678,79 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               },
             ],
           };
+        }
+      }
+
+      case "get_current_user": {
+        try {
+          // Get the viewer (currently authenticated user)
+          const viewer = await linearClient.viewer;
+          
+          // Fetch additional details with a custom GraphQL query
+          const query = `
+            query {
+              viewer {
+                id
+                name
+                displayName
+                email
+                avatarUrl
+                active
+                admin
+                createdAt
+                updatedAt
+                lastSeen
+                teams {
+                  nodes {
+                    id
+                    name
+                    key
+                  }
+                }
+                organization {
+                  id
+                  name
+                }
+              }
+            }
+          `;
+          
+          try {
+            const result = await linearClient.client.rawRequest(query);
+            const userData = (result.data as any)?.viewer;
+            
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify(userData, null, 2),
+                },
+              ],
+            };
+          } catch (error: any) {
+            console.error("Error fetching current user details:", error);
+            
+            // Fallback to basic user information if detailed query fails
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify({
+                    id: viewer.id,
+                    name: viewer.name,
+                    email: viewer.email,
+                    displayName: viewer.displayName,
+                    active: viewer.active,
+                    admin: viewer.admin,
+                    createdAt: viewer.createdAt,
+                  }, null, 2),
+                },
+              ],
+            };
+          }
+        } catch (error: any) {
+          console.error("Error fetching current user:", error);
+          throw new Error(`Failed to fetch current user: ${error.message}`);
         }
       }
 
