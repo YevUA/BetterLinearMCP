@@ -9,7 +9,8 @@
   },
   "files": [
     "build",
-    "setup.js"
+    "setup.js",
+    "install-linear-mcp.sh"
   ],
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
