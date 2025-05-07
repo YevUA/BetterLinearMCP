@@ -48,11 +48,11 @@ A Model Context Protocol (MCP) server that provides tools for interacting with L
 The easiest way to install and configure BetterLinearMCP:
 
 ```bash
-# For Mac/Linux:
-npx agency-linear cursor-setup
+# First, install the package globally
+npm install -g agency-linear
 
-# For Windows:
-npx agency-linear cursor-setup
+# Then run the setup wizard
+npx cursor-setup
 ```
 
 This interactive setup will:
@@ -62,20 +62,24 @@ This interactive setup will:
 
 ### Alternative Installation Methods
 
-#### Global Installation
+#### Global Installation with Manual Setup
 
 ```bash
 # Install globally
 npm install -g agency-linear
 
-# Then run the setup
-agency-linear cursor-setup
+# Then run the setup directly
+cursor-setup
 ```
 
 #### Script-based Installation
 
 ```bash
-npx agency-linear mcp-install
+# Install the package
+npm install -g agency-linear
+
+# Run the bash script
+npx mcp-install
 ```
 
 ### Manual Setup
@@ -102,8 +106,8 @@ If you prefer to configure your assistant manually:
    {
      "mcpServers": {
        "agency-linear": {
-         "command": "npx",
-         "args": ["agency-linear"],
+         "command": "node",
+         "args": ["path/to/global/node_modules/agency-linear/build/index.js"],
          "env": {
            "LINEAR_API_KEY": "your-api-key-here"
          },
@@ -115,8 +119,9 @@ If you prefer to configure your assistant manually:
    ```
 
 4. Replace `your-api-key-here` with your actual Linear API key
+5. Replace `path/to/global/node_modules` with the actual path to your global node_modules folder
 
-5. Restart your AI assistant
+6. Restart your AI assistant
 
 ## Using Linear MCP
 
@@ -125,6 +130,7 @@ After installation, your AI assistant can use commands like:
 - "List all my open Linear issues"
 - "Show me the details of issue ENG-123"
 - "Create a comment on issue ENG-456"
+- "Assign issue ENG-789 to Project X"
 
 The assistant will automatically use the MCP tools to interact with Linear.
 
@@ -176,6 +182,10 @@ The assistant will automatically use the MCP tools to interact with Linear.
 **MCP Not Found:**
 - Make sure the package is installed: `npm list -g agency-linear`
 - Try using the full path to the executable
+
+**Setup Wizard Not Found:**
+- If `npx cursor-setup` fails, try installing globally first: `npm install -g agency-linear`
+- Then run `cursor-setup` directly
 
 **Cursor Configuration Issues:**
 - Verify your mcp.json file exists and contains the agency-linear configuration
