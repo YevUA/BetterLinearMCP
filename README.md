@@ -9,101 +9,120 @@ A Model Context Protocol (MCP) server that provides tools for interacting with L
 ## Features
 
 - **Issue Management**
-
   - Create new issues with customizable properties (title, description, team, assignee, priority, labels)
   - List issues with flexible filtering options (team, assignee, status)
   - Update existing issues (title, description, status, assignee, priority)
+  - Search issues based on text queries
+  - Get detailed issue information including comments, labels, and metadata
+  - Create and update comments on issues
 
 - **Team Management**
-
   - List all teams in the workspace
+  - Create new teams with custom properties
+  - Update existing teams
+  - Delete or archive teams
   - Access team details including ID, name, key, and description
 
 - **Project Management**
   - List all projects with optional team filtering
-  - View project details including name, description, state, and associated teams
+  - Create new projects with customizable properties
+  - Update existing projects
+  - View project details including teams, state, and metadata
+  - Manage project milestones (create, list, update, delete)
 
-## Prerequisites
+- **User Management**
+  - List all users in the workspace
+  - Get detailed user information
 
-- Node.js (v16 or higher)
-- A Linear account with API access
-- Linear API key with appropriate permissions
+- **Label Management**
+  - List all labels with optional team filtering
+  - Create new labels
+  - Update existing labels
+  - Delete labels
 
-## Quick Start
+## Installation
 
-1. Get your Linear API key from [Linear's Developer Settings](https://linear.app/settings/api)
+### Option 1: NPM Package
 
+Install globally:
+
+```bash
+npm install -g agency-linear
+```
+
+Or use with npx:
+
+```bash
+npx agency-linear
+```
+
+### Option 2: One-line Cursor Setup
+
+The quickest way to configure the MCP server for Cursor:
+
+```bash
+npx agency-linear cursor-setup
+```
+
+This will guide you through the setup process and configure Cursor to use the agency-linear MCP server.
+
+### Option 3: Script-based Cursor Setup
+
+Alternatively, use the script-based installer:
+
+```bash
+npx agency-linear mcp-install
+```
+
+### Option 4: Manual Setup
+
+1. Get your Linear API key from Linear's Developer Settings
 2. Run with your API key:
 
 ```bash
-LINEAR_API_KEY=your-api-key npx @ibraheem4/linear-mcp
+LINEAR_API_KEY=your-api-key npx agency-linear
 ```
 
 Or set it in your environment:
 
 ```bash
 export LINEAR_API_KEY=your-api-key
-npx @ibraheem4/linear-mcp
+npx agency-linear
 ```
-
-## Development Setup
-
-1. Clone the repository:
-
-```bash
-git clone [repository-url]
-cd linear-mcp
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Build the project:
-
-```bash
-npm run build
-```
-
-## Running with Inspector
-
-For local development and debugging, you can use the MCP Inspector:
-
-1. Install supergateway:
-
-```bash
-npm install -g supergateway
-```
-
-2. Use the included `run.sh` script:
-
-```bash
-chmod +x run.sh
-LINEAR_API_KEY=your-api-key ./run.sh
-```
-
-3. Access the Inspector:
-   - Open [localhost:1337](http://localhost:1337) in your browser
-   - The Inspector connects via Server-Sent Events (SSE)
-   - Test and debug tool calls through the Inspector interface
 
 ## Configuration
 
 Configure the MCP server in your settings file based on your client:
 
+### For Cursor
+
+```json
+{
+  "mcpServers": {
+    "agency-linear": {
+      "command": "npx",
+      "args": ["agency-linear"],
+      "env": {
+        "LINEAR_API_KEY": "your-api-key-here"
+      },
+      "disabled": false,
+      "alwaysAllow": []
+    }
+  }
+}
+```
+
 ### For Claude Desktop
 
-- MacOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%/Claude/claude_desktop_config.json`
+* MacOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+* Windows: `%APPDATA%/Claude/claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
-    "linear-mcp": {
-      "command": "node",
-      "args": ["/path/to/linear-mcp/build/index.js"],
+    "agency-linear": {
+      "command": "npx",
+      "args": ["agency-linear"],
       "env": {
         "LINEAR_API_KEY": "your-api-key-here"
       },
@@ -112,106 +131,44 @@ Configure the MCP server in your settings file based on your client:
     }
   }
 }
-```
-
-### For VS Code Extension (Cline)
-
-Location: `~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json`
-
-```json
-{
-  "mcpServers": {
-    "linear-mcp": {
-      "command": "node",
-      "args": ["/path/to/linear-mcp/build/index.js"],
-      "env": {
-        "LINEAR_API_KEY": "your-api-key-here"
-      },
-      "disabled": false,
-      "alwaysAllow": []
-    }
-  }
-}
-```
-
-### For Cursor ([cursor.sh](https://cursor.sh))
-
-For Cursor, the server must be run with the full path:
-
-```bash
-node /Users/ibraheem/Projects/linear-mcp/build/index.js
 ```
 
 ## Available Tools
 
-### create_issue
+### Issue Management
+- `create_issue` - Create a new issue
+- `list_issues` - List issues with filters
+- `update_issue` - Update an existing issue
+- `get_issue` - Get detailed issue information
+- `search_issues` - Search for issues using text queries
+- `create_comment` - Create a comment on an issue
+- `update_comment` - Update an existing comment
 
-Creates a new issue in Linear.
+### Team Management
+- `list_teams` - List all teams
+- `create_team` - Create a new team
+- `update_team` - Update an existing team
+- `delete_team` - Delete or archive a team
 
-```typescript
-{
-  title: string;          // Required: Issue title
-  description?: string;   // Optional: Issue description (markdown supported)
-  teamId: string;        // Required: Team ID
-  assigneeId?: string;   // Optional: Assignee user ID
-  priority?: number;     // Optional: Priority (0-4)
-  labels?: string[];     // Optional: Label IDs to apply
-}
-```
+### Project Management
+- `list_projects` - List all projects
+- `create_project` - Create a new project
+- `update_project` - Update an existing project
+- `get_project` - Get detailed project information
+- `list_project_milestones` - List milestones for a project
+- `create_project_milestone` - Create a new milestone
+- `update_project_milestone` - Update a milestone
+- `delete_project_milestone` - Delete a milestone
 
-### list_issues
+### User Management
+- `list_users` - List all users
+- `get_user` - Get detailed user information
 
-Lists issues with optional filters.
-
-```typescript
-{
-  teamId?: string;      // Optional: Filter by team ID
-  assigneeId?: string;  // Optional: Filter by assignee ID
-  status?: string;      // Optional: Filter by status
-  first?: number;       // Optional: Number of issues to return (default: 50)
-}
-```
-
-### update_issue
-
-Updates an existing issue.
-
-```typescript
-{
-  issueId: string;       // Required: Issue ID
-  title?: string;        // Optional: New title
-  description?: string;  // Optional: New description
-  status?: string;      // Optional: New status
-  assigneeId?: string;  // Optional: New assignee ID
-  priority?: number;    // Optional: New priority (0-4)
-  labels?: string[];   // Optional: Label IDs to apply to the issue
-}
-```
-
-### list_teams
-
-Lists all teams in the workspace. No parameters required.
-
-### list_projects
-
-Lists all projects with optional filtering.
-
-```typescript
-{
-  teamId?: string;     // Optional: Filter by team ID
-  first?: number;      // Optional: Number of projects to return (default: 50)
-}
-```
-
-### get_issue
-
-Gets detailed information about a specific issue.
-
-```typescript
-{
-  issueId: string; // Required: Issue ID
-}
-```
+### Label Management
+- `list_labels` - List all labels
+- `create_label` - Create a new label
+- `update_label` - Update an existing label
+- `delete_label` - Delete a label
 
 ## Development
 
