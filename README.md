@@ -1,17 +1,13 @@
-# Linear MCP Server
-
-> Note: This is a custom implementation. For the official Cline Linear MCP server, see [cline/linear-mcp](https://github.com/cline/linear-mcp).
-
-<a href="https://glama.ai/mcp/servers/71fqw0uqmx"> <img width="380" height="200" src="https://glama.ai/mcp/servers/71fqw0uqmx/badge" />
+# BetterLinearMCP
 
 A Model Context Protocol (MCP) server that provides tools for interacting with Linear's API, enabling AI agents to manage issues, projects, and teams programmatically through the Linear platform.
 
 ## Features
 
 - **Issue Management**
-  - Create new issues with customizable properties (title, description, team, assignee, priority, labels)
+  - Create new issues with customizable properties (title, description, team, assignee, priority, labels, project)
   - List issues with flexible filtering options (team, assignee, status)
-  - Update existing issues (title, description, status, assignee, priority)
+  - Update existing issues (title, description, status, assignee, priority, project)
   - Search issues based on text queries
   - Get detailed issue information including comments, labels, and metadata
   - Create and update comments on issues
@@ -40,98 +36,97 @@ A Model Context Protocol (MCP) server that provides tools for interacting with L
   - Update existing labels
   - Delete labels
 
-## Installation
+## Installation & Setup
 
-### Option 1: NPM Package
+### Prerequisites
+- Node.js 18 or later
+- A Linear account with an API key ([get one here](https://linear.app/settings/api))
+- Cursor, Claude, or other MCP-compatible AI assistant
 
-Install globally:
+### Quick Installation (Recommended)
 
-```bash
-npm install -g agency-linear
-```
-
-Or use with npx:
-
-```bash
-npx agency-linear
-```
-
-### Option 2: One-line Cursor Setup
-
-The quickest way to configure the MCP server for Cursor:
+The easiest way to install and configure BetterLinearMCP:
 
 ```bash
+# For Mac/Linux:
+npx agency-linear cursor-setup
+
+# For Windows:
 npx agency-linear cursor-setup
 ```
 
-This will guide you through the setup process and configure Cursor to use the agency-linear MCP server.
+This interactive setup will:
+1. Guide you through entering your Linear API key
+2. Automatically configure Cursor's MCP settings
+3. Set up everything you need to use the Linear tools
 
-### Option 3: Script-based Cursor Setup
+### Alternative Installation Methods
 
-Alternatively, use the script-based installer:
+#### Global Installation
+
+```bash
+# Install globally
+npm install -g agency-linear
+
+# Then run the setup
+agency-linear cursor-setup
+```
+
+#### Script-based Installation
 
 ```bash
 npx agency-linear mcp-install
 ```
 
-### Option 4: Manual Setup
+### Manual Setup
 
-1. Get your Linear API key from Linear's Developer Settings
-2. Run with your API key:
+If you prefer to configure your assistant manually:
 
-```bash
-LINEAR_API_KEY=your-api-key npx agency-linear
-```
+1. Install the package:
+   ```bash
+   npm install -g agency-linear
+   ```
 
-Or set it in your environment:
+2. Edit your MCP configuration file:
 
-```bash
-export LINEAR_API_KEY=your-api-key
-npx agency-linear
-```
+   **For Cursor:**
+   - Mac: `~/.cursor/mcp.json`
+   - Windows: `%APPDATA%\Cursor\mcp.json`
 
-## Configuration
+   **For Claude Desktop:**
+   - Mac: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-Configure the MCP server in your settings file based on your client:
+3. Add this configuration:
+   ```json
+   {
+     "mcpServers": {
+       "agency-linear": {
+         "command": "npx",
+         "args": ["agency-linear"],
+         "env": {
+           "LINEAR_API_KEY": "your-api-key-here"
+         },
+         "disabled": false,
+         "alwaysAllow": []
+       }
+     }
+   }
+   ```
 
-### For Cursor
+4. Replace `your-api-key-here` with your actual Linear API key
 
-```json
-{
-  "mcpServers": {
-    "agency-linear": {
-      "command": "npx",
-      "args": ["agency-linear"],
-      "env": {
-        "LINEAR_API_KEY": "your-api-key-here"
-      },
-      "disabled": false,
-      "alwaysAllow": []
-    }
-  }
-}
-```
+5. Restart your AI assistant
 
-### For Claude Desktop
+## Using Linear MCP
 
-* MacOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-* Windows: `%APPDATA%/Claude/claude_desktop_config.json`
+After installation, your AI assistant can use commands like:
+- "Create a new Linear issue for the Engineering team"
+- "List all my open Linear issues"
+- "Show me the details of issue ENG-123"
+- "Create a comment on issue ENG-456"
 
-```json
-{
-  "mcpServers": {
-    "agency-linear": {
-      "command": "npx",
-      "args": ["agency-linear"],
-      "env": {
-        "LINEAR_API_KEY": "your-api-key-here"
-      },
-      "disabled": false,
-      "alwaysAllow": []
-    }
-  }
-}
-```
+The assistant will automatically use the MCP tools to interact with Linear.
 
 ## Available Tools
 
@@ -170,70 +165,42 @@ Configure the MCP server in your settings file based on your client:
 - `update_label` - Update an existing label
 - `delete_label` - Delete a label
 
-## Development
+## Troubleshooting
+
+### Common Issues
+
+**Linear API Key Issues:**
+- Ensure your API key is valid and has the necessary permissions
+- Check that the key is correctly entered in your configuration
+
+**MCP Not Found:**
+- Make sure the package is installed: `npm list -g agency-linear`
+- Try using the full path to the executable
+
+**Cursor Configuration Issues:**
+- Verify your mcp.json file exists and contains the agency-linear configuration
+- Restart Cursor after making configuration changes
+
+## For Developers
+
+### Local Development
 
 For development with auto-rebuild:
 
 ```bash
+git clone https://github.com/YevUA/BetterLinearMCP.git
+cd BetterLinearMCP
+npm install
 npm run watch
 ```
 
-## Error Handling
-
-The server includes comprehensive error handling for:
-
-- Invalid API keys
-- Missing required parameters
-- Linear API errors
-- Invalid tool requests
-
-All errors are properly formatted and returned with descriptive messages.
-
-## Technical Details
+### Technical Details
 
 Built with:
-
 - TypeScript
 - Linear SDK (@linear/sdk v37.0.0)
 - MCP SDK (@modelcontextprotocol/sdk v0.6.0)
 
-The server uses stdio for communication and implements the Model Context Protocol for seamless integration with AI agents.
-
 ## License
 
 MIT
-
-## Custom Scripts
-
-This repository includes custom utility scripts to help you interact with the Linear API. These scripts demonstrate common use cases and can be modified to suit your needs.
-
-### Available Scripts
-
-- `scripts/test.js` - A basic test script to verify the Linear API connection
-- `scripts/create_test_ticket.js` - Creates a test ticket with a comment
-- `scripts/find_qa_tickets.js` - Finds all tickets in QA status
-- `scripts/my_issues.js` - Lists all issues assigned to the current user
-- `scripts/team_issues.js` - Lists all active issues for a specific team
-
-For more details, see the [scripts/README.md](scripts/README.md) file.
-
-### Running Scripts
-
-Use the provided helper script to easily run any of the custom scripts:
-
-```bash
-./run_script.sh script_name [args]
-```
-
-For example:
-
-```bash
-./run_script.sh my_issues
-./run_script.sh team_issues stonkd
-```
-
-Or run them directly with Node.js:
-
-```bash
-LINEAR_API_KEY=your-api-key node scripts/script_name.js
-```

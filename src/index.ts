@@ -111,6 +111,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
             },
             description: "Label IDs to apply (optional)",
           },
+          projectId: {
+            type: "string",
+            description: "Project ID to assign the issue to (optional)",
+          },
         },
         required: ["title", "teamId"],
       },
@@ -171,6 +175,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
             description: "New priority (0-4, optional)",
             minimum: 0,
             maximum: 4,
+          },
+          projectId: {
+            type: "string",
+            description: "Project ID to assign the issue to (optional)",
           },
         },
         required: ["issueId"],
@@ -648,6 +656,7 @@ type CreateIssueArgs = {
   assigneeId?: string;
   priority?: number;
   labels?: string[];
+  projectId?: string;
 };
 
 type ListIssuesArgs = {
@@ -665,6 +674,7 @@ type UpdateIssueArgs = {
   assigneeId?: string;
   priority?: number;
   labels?: string[];
+  projectId?: string;
 };
 
 type ListProjectsArgs = {
@@ -807,6 +817,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           assigneeId: args.assigneeId,
           priority: args.priority,
           labelIds: args.labels,
+          projectId: args.projectId,
         });
 
         return {
@@ -874,6 +885,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           assigneeId: args.assigneeId,
           labelIds: args.labels,
           priority: args.priority,
+          projectId: args.projectId,
         });
 
         return {
