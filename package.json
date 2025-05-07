@@ -4,7 +4,7 @@
   "description": "A Linear MCP server for interacting with Linear's API",
   "type": "module",
   "bin": {
-    "agency-linear": "./build/index.js"
+    "agency-linear": "build/index.js"
   },
   "files": [
     "build"
@@ -41,7 +41,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YevUA/agency-linear"
+    "url": "git+https://github.com/YevUA/agency-linear.git"
   },
   "publishConfig": {
     "access": "public"
