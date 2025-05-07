@@ -4,10 +4,12 @@
   "description": "A Linear MCP server for interacting with Linear's API",
   "type": "module",
   "bin": {
-    "agency-linear": "build/index.js"
+    "agency-linear": "build/index.js",
+    "cursor-setup": "setup.js"
   },
   "files": [
-    "build"
+    "build",
+    "setup.js"
   ],
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
@@ -16,7 +18,8 @@
     "inspector": "npx @modelcontextprotocol/inspector build/index.js",
     "publish:patch": "npm version patch && npm publish",
     "publish:minor": "npm version minor && npm publish",
-    "publish:major": "npm version major && npm publish"
+    "publish:major": "npm version major && npm publish",
+    "postinstall": "echo '\n🚀 To configure Cursor for agency-linear, run: npx cursor-setup\n'"
   },
   "dependencies": {
     "@linear/sdk": "37.0.0",
