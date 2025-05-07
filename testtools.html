@@ -1,0 +1,2663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI-Assisted Testing in 2025 – QA Tools & Practices</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --secondary: #10b981;
+      --dark: #111827;
+      --light: #f9fafb;
+      --gray: #6b7280;
+      --accent: #8b5cf6;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    /* Header styles */
+    header {
+      color: white;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Added header background image */
+    .header-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80');
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+    
+    /* Added overlay for better text readability */
+    header::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(14, 23, 97, 0.7);
+      z-index: 1;
+    }
+    
+    .header-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      z-index: 5;
+      padding: 2rem;
+    }
+    
+    .header-text {
+      max-width: 800px;
+    }
+    
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      background: linear-gradient(to right, #ffffff, #c7d2fe);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background: var(--secondary);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 20px -3px rgba(0, 0, 0, 0.2);
+    }
+    
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 2s infinite;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      z-index: 5;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
+      40% {transform: translateY(-20px) translateX(-50%);}
+      60% {transform: translateY(-10px) translateX(-50%);}
+    }
+    
+    /* Navigation */
+    nav {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    nav.scrolled {
+      padding: 0.7rem 0;
+      background: rgba(255, 255, 255, 0.98);
+    }
+    
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo i {
+      margin-right: 0.5rem;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .nav-links a {
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .nav-links a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-links a:hover:after {
+      width: 100%;
+    }
+    
+    .mobile-nav-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--dark);
+      cursor: pointer;
+    }
+    
+    /* Section Styles */
+    section {
+      padding: 6rem 0;
+      position: relative;
+      display: block !important; /* Force all sections to display */
+      box-sizing: border-box;
+      min-height: 80vh; /* Minimum height to ensure sections are substantial */
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Subtle section separator */
+    }
+    
+    section:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    section:nth-child(odd) {
+      background-color: #ffffff;
+    }
+    
+    section:last-child {
+      border-bottom: none;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      color: var(--dark);
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title:after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 4px;
+      background: var(--primary);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    
+    .section-subtitle {
+      font-size: 1.2rem;
+      color: var(--gray);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    /* Cards */
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+      position: relative;
+    }
+    
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      height: 100%;
+      position: relative;
+    }
+    
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: visible;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 450px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-image {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .card-content {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 180px;
+    }
+    
+    .card-title {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+      text-align: center;
+    }
+    
+    .card-text {
+      color: #333;
+      line-height: 1.6;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+      margin: 15px auto;
+      padding: 0 10px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .expand-button {
+      background: none;
+      border: none;
+      color: #4a6cf7;
+      cursor: pointer;
+      padding: 8px 0;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto;
+      width: 100%;
+      transition: all 0.3s ease;
+      border-top: 1px solid #eaeaea;
+    }
+    
+    .expand-button:hover {
+      background-color: #f5f8ff;
+    }
+    
+    .expand-button.active {
+      background-color: #f0f4ff;
+    }
+    
+    .expand-button i {
+      margin-left: 5px;
+      transition: transform 0.3s ease;
+    }
+    
+    /* Expansion container styling */
+    .expansion-container {
+      display: none;
+      position: absolute;
+      width: 100%;
+      max-width: calc(100vw - 40px);
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      padding: 20px;
+      margin-top: 20px;
+      z-index: 1000;
+      overflow-x: auto;
+    }
+
+    /* Style inside expansion container */
+    .expansion-container h2 {
+      margin-top: 0;
+    }
+    
+    .card-expanded-content {
+      padding: 20px;
+      background-color: white;
+      border-top: 1px solid #eaeaea;
+      margin-top: 10px;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+      position: relative;
+      z-index: 10;
+      transform-origin: top center;
+      transition: all 0.3s ease;
+    }
+    
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    
+    .card-tag {
+      background: #f0f4ff;
+      color: #4a6cf7;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .service-link {
+      display: inline-block;
+      color: #4a6cf7;
+      margin-right: 15px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .service-link i {
+      margin-right: 5px;
+    }
+    
+    .example-block {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+    
+    .example-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .example-code {
+      background: #272822;
+      color: #f8f8f2;
+      border-radius: 4px;
+      padding: 15px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      margin-top: 10px;
+    }
+    
+    /* Feature boxes with similar layout */
+    .features-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+      position: relative;
+    }
+    
+    .feature-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      height: 100%;
+    }
+    
+    .feature-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      color: white;
+    }
+    
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--dark);
+    }
+    
+    .feature-text {
+      color: var(--gray);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+    
+    .feature-box .expand-button {
+      margin-top: auto;
+    }
+    
+    .feature-box .card-expanded-content {
+      left: 0;
+      padding: 2rem;
+      text-align: left;
+    }
+    
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 2rem 0;
+      border-radius: 10px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    th {
+      background-color: #f9fafb;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    tr:hover {
+      background-color: #f9fafb;
+    }
+    
+    /* List items */
+    .list-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    
+    .list-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+    }
+    
+    .feature-list {
+      list-style: none;
+    }
+    
+    .feature-list li {
+      padding: 1rem 0;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: flex-start;
+    }
+    
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .feature-list li i {
+      color: var(--primary);
+      margin-right: 1rem;
+      margin-top: 0.25rem;
+    }
+    
+    .feature-name {
+      font-weight: 600;
+      margin-right: 0.5rem;
+      color: var(--dark);
+    }
+    
+    /* Code block */
+    .code-block {
+      background: var(--dark);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .code-title {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 0.9rem;
+      border-radius: 5px;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    
+    .code-content {
+      color: white;
+      font-size: 0.9rem;
+      overflow-x: auto;
+    }
+    
+    .code-highlight {
+      color: var(--accent);
+    }
+    
+    .code-comment {
+      color: #a0aec0;
+    }
+    
+    /* Stats section */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    
+    .stat-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      color: var(--gray);
+      font-size: 0.95rem;
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--dark);
+      color: white;
+      padding: 4rem 0 2rem;
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .footer-column h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+    
+    .footer-column h3:after {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 3px;
+      background: var(--primary);
+      bottom: 0;
+      left: 0;
+      border-radius: 2px;
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 0.75rem;
+    }
+    
+    .footer-links a {
+      color: #cbd5e0;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+    }
+    
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      color: #cbd5e0;
+    }
+    
+    /* Background decorations */
+    .bg-gradient-circle {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, rgba(37, 99, 235, 0) 70%);
+      z-index: 1;
+    }
+    
+    .header-circle-1 {
+      top: -200px;
+      right: -100px;
+    }
+    
+    .header-circle-2 {
+      bottom: -200px;
+      left: -100px;
+      width: 600px;
+      height: 600px;
+    }
+    
+    .grid-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 30px 30px;
+      z-index: 1;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .subtitle {
+        font-size: 1.2rem;
+      }
+      
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 1rem 0;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      
+      .nav-links.active {
+        display: flex;
+      }
+      
+      .mobile-nav-toggle {
+        display: block;
+      }
+      
+      .cards-container, .features-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+      
+      section {
+        padding: 4rem 0;
+      }
+    }
+    
+    /* Animations and transitions */
+    .fade-in {
+      opacity: 1; /* Start visible instead of invisible */
+      transform: none !important; /* No transformation needed */
+      transition: opacity 0.3s ease;
+    }
+    
+    .fade-in.visible {
+      opacity: 1;
+      transform: none !important;
+    }
+    
+    /* Added expandable card content styles */
+    .card-expanded-content {
+      padding: 0 1.5rem 1.5rem;
+      border-top: 1px solid #e5e7eb;
+      margin-top: 1rem;
+      display: none;
+    }
+    
+    .card.expanded .card-expanded-content {
+      display: block;
+    }
+    
+    .feature-box.expanded .card-expanded-content {
+      display: block;
+    }
+    
+    .card-tag {
+      display: inline-block;
+      background: #eef2ff;
+      color: var(--primary);
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 50px;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .expand-button {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0;
+    }
+    
+    .expand-button i {
+      transition: transform 0.3s ease;
+      margin-left: 0.5rem;
+    }
+    
+    .card.expanded .expand-button i,
+    .feature-box.expanded .expand-button i {
+      transform: rotate(180deg);
+    }
+    
+    .example-block {
+      background: #f8fafc;
+      border-left: 3px solid var(--primary);
+      padding: 1rem;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+    
+    .example-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+    
+    .example-code {
+      background: #1e293b;
+      color: white;
+      padding: 1rem;
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      margin: 0.5rem 0;
+    }
+    
+    .service-link {
+      display: inline-flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .service-link:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+    }
+    
+    .service-link i {
+      margin-right: 0.5rem;
+      color: var(--primary);
+    }
+    
+    .nav-links a.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    .nav-links a.active:after {
+      width: 100%;
+    }
+    
+    /* Improved Navigation styling */
+    nav {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a {
+      position: relative;
+      padding: 0.5rem 0.8rem;
+      margin: 0 0.2rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-links a.active {
+      color: var(--primary);
+      font-weight: 600;
+      background-color: rgba(37, 99, 235, 0.08);
+    }
+    
+    .nav-links a:hover {
+      background-color: rgba(37, 99, 235, 0.05);
+    }
+    
+    .nav-links a.active:after {
+      width: 100%;
+    }
+    
+    /* Methodology details styling */
+    .methodology-details {
+      margin: 1rem 0 1.5rem 1.8rem;
+      padding: 1rem;
+      background-color: rgba(37, 99, 235, 0.04);
+      border-left: 3px solid var(--primary);
+      border-radius: 0 4px 4px 0;
+    }
+    
+    .methodology-details p {
+      margin-bottom: 0.8rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .methodology-details p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .methodology-details strong {
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+    
+    /* Example container styling */
+    .example-container {
+      margin-top: 3rem;
+      background-color: white;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .example-header {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .section-expand-button {
+      background: #f0f4ff;
+      border: 1px solid #e0e7ff;
+      color: #4a6cf7;
+      border-radius: 4px;
+      padding: 5px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    
+    .section-expand-button i {
+      margin-left: 5px;
+      transition: transform 0.3s ease;
+    }
+    
+    .section-expand-button.active i {
+      transform: rotate(180deg);
+    }
+    
+    .section-expand-button:hover {
+      background: #e0e7ff;
+    }
+    
+    .example-card {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background-color: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .example-card h4 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--primary-dark);
+    }
+    
+    .example-card:last-child {
+      margin-bottom: 0;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .methodology-details {
+        margin-left: 0;
+      }
+    }
+    
+    /* New styles for feature boxes */
+    .features-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .feature-box {
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: visible;
+    }
+    
+    .feature-box.active {
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-expanded-content {
+      overflow: visible !important;
+      z-index: 100;
+      width: 100%;
+    }
+    
+    #analytics-reviewer-content, 
+    #test-maintenance-content {
+      margin-top: 15px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 1000;
+    }
+    
+    /* Expandable content */
+    .expandable-content {
+      display: none;
+      position: relative;
+      z-index: 100;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      padding: 20px;
+      margin-top: 15px;
+      margin-bottom: 30px;
+      overflow: hidden;
+      transform-origin: top center;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      max-height: 0;
+      opacity: 0;
+    }
+    
+    .expandable-content.active {
+      display: block;
+      max-height: 2000px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .expandable-content .example-card {
+      margin-bottom: 30px;
+    }
+    
+    .expandable-content .example-card:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header id="home">
+    <div class="grid-bg"></div>
+    <div class="bg-gradient-circle header-circle-1"></div>
+    <div class="bg-gradient-circle header-circle-2"></div>
+    <div class="header-background"></div>
+    <div class="header-content">
+      <div class="header-text">
+        <h1>AI-Assisted Testing</h1>
+        <p class="subtitle">State of QA in 2025: Tools, Workflows & Best Practices</p>
+        <a href="#overview" class="cta-button">Explore The Future <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+    <a href="#overview" class="scroll-indicator">
+      <i class="fas fa-chevron-down"></i>
+    </a>
+  </header>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="container nav-container">
+      <a href="#overview" class="logo"><i class="fas fa-robot"></i> QA.AI 2025</a>
+      <div class="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#manual">Manual QA</a>
+        <a href="#automated">Automated QA</a>
+        <a href="#workflows">Workflows</a>
+        <a href="#ai-roles">AI Roles</a>
+        <a href="#top-tools">Top Tools</a>
+      </div>
+      <button class="mobile-nav-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Overview Section -->
+  <section id="overview" class="fade-in">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">State of AI Testing</h2>
+        <p class="section-subtitle">How AI has transformed quality assurance across platforms</p>
+      </div>
+      
+      <div class="stats-container">
+        <div class="stat-box">
+          <div class="stat-number">78%</div>
+          <div class="stat-label">Enterprise Adoption</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">92%</div>
+          <div class="stat-label">Defect Prediction Accuracy</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">40x</div>
+          <div class="stat-label">Faster Test Creation</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">3+</div>
+          <div class="stat-label">Platforms Covered</div>
+        </div>
+      </div>
+      
+      <div class="list-container">
+        <h3 class="list-title">Key Innovations</h3>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Manual QA:</span> Crowdtesting networks and test-management platforms streamline planning, execution, and real-world device coverage.</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Automation QA:</span> Self-healing frameworks, AI-powered visual validation, and dynamic test generation adapt to rapid UI changes.</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Workflows:</span> NLP test authoring, scriptless automation, CI/CD integration, and digital twin simulations promote early defect detection.</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Skillsets:</span> QA pros must learn prompt engineering, AI role design, and responsible AI practices from major tech firms like Google, Microsoft, and AWS.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Manual QA Section -->
+  <section id="manual" class="fade-in">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Manual QA Toolkit</h2>
+        <p class="section-subtitle">AI-powered solutions for human testers</p>
+      </div>
+      
+      <div class="cards-container">
+        <!-- First card: TestRail -->
+        <div class="card">
+          <a href="https://www.testrail.com" target="_blank" class="card-link">
+            <div class="card-image" style="background-image: url('assets/img/testrail.png');"></div>
+          <div class="card-content">
+              <h3 class="card-title">TestRail</h3>
+              <p class="card-text">A comprehensive test case management tool that helps teams organize, track, and manage their testing efforts with real-time insights.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content" style="display:none;">
+            <div class="card-tags">
+              <span class="card-tag">Test Management</span>
+              <span class="card-tag">Quality Assurance</span>
+              <span class="card-tag">Test Reporting</span>
+            </div>
+            <div class="example-block">
+              <h4 class="example-title">Usage Example</h4>
+              <p>TestRail helps organize test cases, execute test runs, and generate detailed reports. It integrates with many issue trackers and CI/CD systems.</p>
+              <div class="example-code">// Sample test management workflow
+1. Create test cases with detailed steps
+2. Organize tests into suites and plans
+3. Execute tests and record results
+4. Generate reports to track testing progress
+5. Integrate with JIRA, GitHub, Jenkins</div>
+            </div>
+            <div class="service-links" style="margin-top: 20px;">
+              <a href="https://www.testrail.com" target="_blank" class="service-link"><i class="fas fa-external-link-alt"></i> Website</a>
+              <a href="https://www.testrail.com/pricing/" target="_blank" class="service-link"><i class="fas fa-tag"></i> Pricing</a>
+              <a href="https://www.gurock.com/testrail/docs/user-guide/getting-started/walkthrough" target="_blank" class="service-link"><i class="fas fa-book"></i> Documentation</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <a href="https://marketplace.atlassian.com/apps/1014681/zephyr-squad-test-management-for-jira" target="_blank" class="card-link">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+          <div class="card-content">
+            <h3 class="card-title">Zephyr MindMap</h3>
+            <p class="card-text">Jira-integrated test case generator from user stories. SaaS for manual and automated test tracking.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content">
+            <div class="card-tags">
+              <span class="card-tag">Jira Integration</span>
+              <span class="card-tag">Visual Mind Mapping</span>
+              <span class="card-tag">Requirements Traceability</span>
+            </div>
+            <p>Zephyr MindMap uses natural language processing to analyze Jira user stories and epics, automatically generating visual mind maps of test scenarios with varying priorities based on risk assessment.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Integration Example</div>
+              <p>Configure Zephyr to automatically create test cases when a user story transitions to "Ready for QA":</p>
+              <div class="example-code">
+                // Jira Webhook Configuration
+                {
+                  "url": "https://zephyr-mindmap.io/api/webhook",
+                  "events": ["jira:issue_updated"],
+                  "jqlFilter": "project = 'Mobile App' AND status CHANGED TO 'Ready for QA'",
+                  "excludeBody": false
+                }
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://www.getzephyr.com/" class="service-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Zephyr Website
+              </a>
+              <a href="https://marketplace.atlassian.com/apps/1014681/zephyr-squad-test-management-for-jira" class="service-link" target="_blank">
+                <i class="fab fa-jira"></i> Jira Marketplace
+              </a>
+              <a href="https://support.smartbear.com/zephyr-squad-server/docs/" class="service-link" target="_blank">
+                <i class="fas fa-book"></i> Documentation
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <a href="https://www.tricentis.com/products/qtest/" target="_blank" class="card-link">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1573495804683-641191e042ea?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+          <div class="card-content">
+            <h3 class="card-title">qTest Explorer</h3>
+            <p class="card-text">Session recording with AI-powered heatmaps. Agile-focused test management, combining exploratory and automation workflows.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content">
+            <div class="card-tags">
+              <span class="card-tag">Exploratory Testing</span>
+              <span class="card-tag">Session Recording</span>
+              <span class="card-tag">Heat Maps</span>
+            </div>
+            <p>qTest Explorer offers AI-powered session recording that intelligently tags and categorizes user interactions during exploratory testing. The system creates visual heatmaps that identify high-risk areas based on user interaction patterns.</p>
+              
+            <div class="example-block">
+              <div class="example-title">Integration with Jira Example</div>
+              <p>Set up qTest to automatically create Jira issues from recorded sessions:</p>
+              <div class="example-code">
+                # Jira Integration Configuration
+                {
+                  "jiraUrl": "https://your-company.atlassian.net",
+                  "projectKey": "QA",
+                  "issueType": "Bug",
+                  "autoCreateIssues": true,
+                  "fieldMappings": {
+                    "summary": "{{session.title}}",
+                    "description": "{{session.notes}}",
+                    "attachments": "{{session.screenshots}}",
+                    "priority": "{{session.priority}}"
+                  }
+                }
+              </div>
+            </div>
+              
+            <div style="margin-top: 1.5rem;">
+              <a href="https://www.tricentis.com/products/qtest/" class="service-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> qTest Website
+              </a>
+              <a href="https://marketplace.atlassian.com/apps/1211393/tricentis-qtest-for-jira" class="service-link" target="_blank">
+                <i class="fab fa-jira"></i> Jira Integration
+              </a>
+              <a href="https://documentation.tricentis.com/qtest/" class="service-link" target="_blank">
+                <i class="fas fa-book"></i> Documentation
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <a href="https://www.practitest.com/" target="_blank" class="card-link">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+          <div class="card-content">
+            <h3 class="card-title">PractiTest RiskMatrix</h3>
+            <p class="card-text">Predictive analytics for test prioritization. Risk-based testing via analytics and unified dashboards.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content" style="display:none;">
+              <div class="card-tags">
+                <span class="card-tag">Risk Assessment</span>
+                <span class="card-tag">Predictive Analytics</span>
+                <span class="card-tag">Jira Integration</span>
+              </div>
+              <p>PractiTest RiskMatrix applies machine learning to identify high-risk areas in your application based on code complexity, change frequency, and historical defect patterns, allowing QA teams to focus testing efforts where they matter most.</p>
+              
+              <div class="example-block">
+                <div class="example-title">Jira + Confluence Integration</div>
+                <p>Configure PractiTest to sync risk dashboards with Jira and Confluence:</p>
+                <div class="example-code">
+                  // Atlassian Integration Settings
+                  {
+                    "jiraSync": {
+                      "url": "https://company.atlassian.net",
+                      "projectKey": "PROJ",
+                      "issueTypes": ["Bug", "Test"],
+                      "customFields": {
+                        "riskScore": "customfield_10201",
+                        "testCoverage": "customfield_10202"
+                      }
+                    },
+                    "confluenceSync": {
+                      "enabled": true,
+                      "spaceKey": "QA",
+                      "automaticReporting": true,
+                      "reportSchedule": "daily",
+                      "includeRiskMatrix": true
+                    }
+                  }
+                </div>
+              </div>
+              
+              <div style="margin-top: 1.5rem;">
+                <a href="https://www.practitest.com/" class="service-link" target="_blank">
+                  <i class="fas fa-external-link-alt"></i> PractiTest Website
+                </a>
+                <a href="https://www.practitest.com/integration/jira/" class="service-link" target="_blank">
+                  <i class="fab fa-jira"></i> Jira Integration
+                </a>
+                <a href="https://www.practitest.com/help/" class="service-link" target="_blank">
+                  <i class="fas fa-book"></i> Documentation
+                </a>
+              </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <a href="https://www.globalapptesting.com/" target="_blank" class="card-link">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1520333789090-1afc82db536a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+          <div class="card-content">
+            <h3 class="card-title">GlobalAppTesting 2.0</h3>
+            <p class="card-text">On-demand device labs with AR-assisted bug reporting. Real-device crowdtesting in 190+ countries with fast turnaround.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content" style="display:none;">
+              <div class="card-tags">
+                <span class="card-tag">Global Testing</span>
+                <span class="card-tag">AR Bug Reporting</span>
+                <span class="card-tag">Device Farm</span>
+              </div>
+              <p>GlobalAppTesting 2.0 combines crowdsourced testing with AR-powered bug reporting tools. Testers can highlight UI issues directly on the device, creating spatial annotations that provide developers with precise context for fixing bugs.</p>
+              
+              <div class="example-block">
+                <div class="example-title">Jira + Confluence Workflow</div>
+                <p>Automatically create comprehensive Jira tickets from GlobalAppTesting results:</p>
+                <div class="example-code">
+                  // Atlassian Integration
+                  export const gatToJiraWorkflow = {
+                    "enabled": true,
+                    "credentials": {
+                      "jiraUrl": "https://example.atlassian.net",
+                      "apiKey": "${JIRA_API_KEY}"
+                    },
+                    "mapping": {
+                      "project": "MOBILE",
+                      "issueType": "Bug",
+                      "fields": {
+                        "summary": "{{bug.title}}",
+                        "description": "{{bug.description}}\n\n*Device:* {{bug.device}}\n*OS:* {{bug.os}}\n*Location:* {{bug.testerLocation}}",
+                        "priority": "{{bug.severity}}",
+                        "labels": ["crowdtesting", "{{bug.type}}"],
+                        "customFields": {
+                          "steps": "{{bug.reproductionSteps}}",
+                          "arData": "{{bug.arAnnotationUrl}}"
+                        }
+                      }
+                    },
+                    "confluenceReporting": {
+                      "enabled": true,
+                      "space": "QA",
+                      "parentPage": "Crowdtesting Results"
+                    }
+                  };
+                </div>
+              </div>
+              
+              <div style="margin-top: 1.5rem;">
+                <a href="https://www.globalapptesting.com/" class="service-link" target="_blank">
+                  <i class="fas fa-external-link-alt"></i> GlobalAppTesting Website
+                </a>
+                <a href="https://www.globalapptesting.com/integrations/jira" class="service-link" target="_blank">
+                  <i class="fab fa-jira"></i> Jira Integration
+                </a>
+                <a href="https://help.globalapptesting.com/" class="service-link" target="_blank">
+                  <i class="fas fa-book"></i> Documentation
+                </a>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Automated QA Section -->
+  <section id="automated" class="fade-in">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Automated QA Ecosystem</h2>
+        <p class="section-subtitle">AI-driven frameworks that adapt and learn</p>
+      </div>
+      
+      <div class="cards-container">
+        <div class="card">
+          <a href="https://www.testim.io/" target="_blank" class="card-link">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+          <div class="card-content">
+            <h3 class="card-title">Testim Cortex</h3>
+            <p class="card-text">Self-healing scripts with multi-app workflow testing. Uses generative AI to auto-record and maintain resilient scripts.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content">
+            <div class="card-tags">
+              <span class="card-tag">Self-Healing</span>
+              <span class="card-tag">Multi-App Workflow</span>
+              <span class="card-tag">Generative AI</span>
+            </div>
+            <p>Testim Cortex uses generative AI to automatically record and maintain resilient scripts for multi-app workflow testing.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Usage Example</div>
+              <p>Connect Testim to your GitHub repository to automatically generate test cases when new features are added:</p>
+              <div class="example-code">
+                // In GitHub Actions workflow
+                - name: Generate Testim Test Cases
+                  uses: testim-actions/generate-cases@v2
+                  with:
+                    api-key: ${{ secrets.TESTIM_API_KEY }}
+                    project-id: 12345
+                    feature-branch: ${{ github.ref }}
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://www.testim.io/" class="service-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Testim Website
+              </a>
+              <a href="https://github.com/testim-io/testim-actions" class="service-link" target="_blank">
+                <i class="fab fa-github"></i> GitHub Repository
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <a href="https://applitools.com/" target="_blank" class="card-link">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+          <div class="card-content">
+            <h3 class="card-title">Applitools Ultraviolet</h3>
+            <p class="card-text">3D visual diffs with spatial awareness. Pixel-perfect cross-device visual validation with AI-based diffing.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content">
+            <div class="card-tags">
+              <span class="card-tag">Visual Validation</span>
+              <span class="card-tag">Cross-Device Testing</span>
+              <span class="card-tag">AI-Based Diffing</span>
+            </div>
+            <p>Applitools Ultraviolet uses AI-based diffing to ensure pixel-perfect cross-device visual validation.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Usage Example</div>
+              <p>Connect Applitools to your GitHub repository to automatically generate visual validation tests:</p>
+              <div class="example-code">
+                // In GitHub Actions workflow
+                - name: Generate Applitools Tests
+                  uses: applitools-actions/generate-tests@v2
+                  with:
+                    api-key: ${{ secrets.APPLITOOLS_API_KEY }}
+                    project-id: 12345
+                    feature-branch: ${{ github.ref }}
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://applitools.com/" class="service-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Applitools Website
+              </a>
+              <a href="https://github.com/applitools/applitools-actions" class="service-link" target="_blank">
+                <i class="fab fa-github"></i> GitHub Repository
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <a href="https://www.functionize.com/" target="_blank" class="card-link">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+          <div class="card-content">
+            <h3 class="card-title">Functionize Neuro</h3>
+            <p class="card-text">Natural language to executable test pipelines. Chrome plugin and ML test agents generate and analyze tests.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content">
+            <div class="card-tags">
+              <span class="card-tag">Natural Language</span>
+              <span class="card-tag">Executable Test Pipelines</span>
+              <span class="card-tag">Chrome Plugin</span>
+            </div>
+            <p>Functionize Neuro uses natural language to generate executable test pipelines and integrates with Chrome for seamless testing.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Usage Example</div>
+              <p>Connect Functionize to your GitHub repository to automatically generate test cases:</p>
+              <div class="example-code">
+                // In GitHub Actions workflow
+                - name: Generate Functionize Tests
+                  uses: functionize-actions/generate-tests@v2
+                  with:
+                    api-key: ${{ secrets.FUNCTIONIZE_API_KEY }}
+                    project-id: 12345
+                    feature-branch: ${{ github.ref }}
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://www.functionize.com/" class="service-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Functionize Website
+              </a>
+              <a href="https://github.com/functionize-io/functionize-actions" class="service-link" target="_blank">
+                <i class="fab fa-github"></i> GitHub Repository
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <a href="https://www.mabl.com/" target="_blank" class="card-link">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+          <div class="card-content">
+            <h3 class="card-title">Mabl Quantum</h3>
+            <p class="card-text">Low-code E2E testing with API flow prediction. Unified tool for web/mobile/API testing using low-code + ML.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content">
+            <div class="card-tags">
+              <span class="card-tag">Low-Code</span>
+              <span class="card-tag">E2E Testing</span>
+              <span class="card-tag">API Flow Prediction</span>
+            </div>
+            <p>Mabl Quantum uses low-code and ML to predict API flows and automate end-to-end testing.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Usage Example</div>
+              <p>Connect Mabl to your GitHub repository to automatically generate test cases:</p>
+              <div class="example-code">
+                // In GitHub Actions workflow
+                - name: Generate Mabl Tests
+                  uses: mabl-actions/generate-tests@v2
+                  with:
+                    api-key: ${{ secrets.MABL_API_KEY }}
+                    project-id: 12345
+                    feature-branch: ${{ github.ref }}
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://www.mabl.com/" class="service-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Mabl Website
+              </a>
+              <a href="https://github.com/mablhq/mabl-actions" class="service-link" target="_blank">
+                <i class="fab fa-github"></i> GitHub Repository
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <a href="https://test.ai/" target="_blank" class="card-link">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+          <div class="card-content">
+            <h3 class="card-title">Test.ai Orion</h3>
+            <p class="card-text">Autonomous regression testing with genetic algorithms. AI-driven regression, functional, and accessibility testing for apps.</p>
+          </div>
+          </a>
+          <button class="expand-button">Learn more <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content">
+            <div class="card-tags">
+              <span class="card-tag">Autonomous</span>
+              <span class="card-tag">Regression Testing</span>
+              <span class="card-tag">Genetic Algorithms</span>
+          </div>
+            <p>Test.ai Orion uses genetic algorithms to perform autonomous regression testing.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Usage Example</div>
+              <p>Connect Test.ai to your GitHub repository to automatically generate test cases:</p>
+              <div class="example-code">
+                // In GitHub Actions workflow
+                - name: Generate Test.ai Tests
+                  uses: testai-actions/generate-tests@v2
+                  with:
+                    api-key: ${{ secrets.TESTAI_API_KEY }}
+                    project-id: 12345
+                    feature-branch: ${{ github.ref }}
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://test.ai/" class="service-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Test.ai Website
+              </a>
+              <a href="https://github.com/testai-io/testai-actions" class="service-link" target="_blank">
+                <i class="fab fa-github"></i> GitHub Repository
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflows Section -->
+  <section id="workflows" class="fade-in">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Emerging Methodologies</h2>
+        <p class="section-subtitle">AI-driven approaches revolutionizing QA</p>
+      </div>
+      
+      <div class="features-container">
+        <div class="feature-box">
+          <div class="feature-icon">
+            <i class="fas fa-sync"></i>
+          </div>
+          <h3 class="feature-title">Self-Healing Tests</h3>
+          <p class="feature-text">Automatically fix broken locators using ML algorithms that adapt to UI changes without human intervention.</p>
+        </div>
+        
+        <div class="feature-box">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3 class="feature-title">Predictive Detection</h3>
+          <p class="feature-text">AI analyzes past data to identify risky modules and predict likely failure points before they occur.</p>
+        </div>
+        
+        <div class="feature-box">
+          <div class="feature-icon">
+            <i class="fas fa-sitemap"></i>
+          </div>
+          <h3 class="feature-title">Dynamic Test Generation</h3>
+          <p class="feature-text">Auto-generates edge cases from user behavior (e.g. 10k tests @ Goldman Sachs).</p>
+        </div>
+        
+        <div class="feature-box">
+          <div class="feature-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3 class="feature-title">Exploratory Analytics</h3>
+          <p class="feature-text">Session recording + bug heatmaps for comprehensive visual understanding of issues.</p>
+        </div>
+        
+        <div class="feature-box">
+          <div class="feature-icon">
+            <i class="fas fa-code-branch"></i>
+          </div>
+          <h3 class="feature-title">CI/CD Integration</h3>
+          <p class="feature-text">Test automation in every commit/build pipeline for continuous quality assurance.</p>
+        </div>
+        
+        <div class="feature-box">
+          <div class="feature-icon">
+            <i class="fas fa-language"></i>
+          </div>
+          <h3 class="feature-title">Scriptless Automation</h3>
+          <p class="feature-text">Natural language test creation via tools like Testim, Katalon, Leapwork.</p>
+        </div>
+      </div>
+      
+      <div class="list-container">
+        <h3 class="list-title">Additional Methodologies</h3>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>
+              <span class="feature-name">Shift-Left:</span> 
+              Start testing at design/requirements stage for early defect detection. Integrating testing earlier in development reduces costs and shortens release cycles.
+              <div class="methodology-details">
+                <p><strong>Benefits:</strong> 80% reduction in post-release defects, 35% faster time-to-market, improved collaboration between developers and QA.</p>
+                <p><strong>Where to Use:</strong> Enterprise applications, regulated industries (finance, healthcare), mission-critical systems with high reliability requirements.</p>
+                <p><strong>Example:</strong> Microsoft's Xbox Game Studios implemented shift-left testing by embedding testers within development teams. Test engineers participate in design reviews and create automated tests before code is written, using requirements as specifications. This approach reduced post-release patches by 45% and improved developer productivity.</p>
+                <p><strong>Implementation:</strong> Use BDD frameworks like Cucumber, integrate test automation in the CI pipeline, include QA in sprint planning meetings, and adopt test-first methodologies.</p>
+              </div>
+            </span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>
+              <span class="feature-name">Digital Twins:</span> 
+              Create virtual replicas of physical systems to perform comprehensive testing in simulated environments before deployment to production.
+              <div class="methodology-details">
+                <p><strong>Benefits:</strong> Test systems under extreme conditions without risk, identify integration issues early, validate performance at scale.</p>
+                <p><strong>Where to Use:</strong> IoT systems, industrial applications, smart city infrastructure, automotive systems, cloud architecture modeling.</p>
+                <p><strong>Example:</strong> Tesla creates digital twins of their vehicles to test software updates before deploying to the physical fleet. Each software release is tested against thousands of simulated driving scenarios, weather conditions, and edge cases. This approach has enabled them to roll out software updates to millions of vehicles with minimal customer-reported issues.</p>
+                <p><strong>Implementation:</strong> Use simulation platforms like MATLAB, AnyLogic, or AWS IoT TwinMaker to model systems, integrate real-time data feeds, and create scenario libraries for comprehensive testing.</p>
+              </div>
+            </span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>
+              <span class="feature-name">Contract Testing:</span> 
+              Verify that API providers and consumers meet their contractual agreements to ensure reliable integrations between microservices.
+              <div class="methodology-details">
+                <p><strong>Benefits:</strong> Independent service deployments, faster testing cycles, clear documentation of integration points.</p>
+                <p><strong>Where to Use:</strong> Microservice architectures, distributed teams, third-party API integrations, complex backend systems.</p>
+                <p><strong>Example:</strong> Spotify implemented contract testing for their microservices architecture, which consists of over 200 services maintained by different teams. Using Pact for consumer-driven contract testing, they were able to reduce integration testing time by 90% and catch integration issues before they reached production environments. Teams can now release services independently while maintaining confidence in the whole system.</p>
+                <p><strong>Implementation:</strong> Adopt tools like Pact for consumer-driven contracts, Postman for API testing, or Spring Cloud Contract for HTTP/messaging-based applications.</p>
+              </div>
+            </span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>
+              <span class="feature-name">Chaos Engineering:</span> 
+              Deliberately introduce failures in controlled environments to build resilience and identify weaknesses in systems.
+              <div class="methodology-details">
+                <p><strong>Benefits:</strong> Improved system resilience, better handling of unexpected conditions, increased confidence in system stability.</p>
+                <p><strong>Where to Use:</strong> Cloud-native applications, high-availability systems, distributed architectures, 24/7 critical services.</p>
+                <p><strong>Example:</strong> Netflix's Chaos Monkey tool randomly terminates instances in production to ensure their systems can withstand unexpected failures. Since implementing chaos engineering, Netflix has reduced service outages by 70% and can recover from most infrastructure failures within minutes without customer impact.</p>
+                <p><strong>Implementation:</strong> Use tools like Chaos Monkey, Gremlin, or Litmus for Kubernetes to systematically inject failures into your system and observe the results.</p>
+              </div>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Add detailed example blocks -->
+      <div class="example-container">
+        <h3 class="example-header">Implementation Examples <button id="examples-expand-button" class="section-expand-button">Show More <i class="fas fa-chevron-down"></i></button></h3>
+        
+        <div id="implementation-examples-content" class="expandable-content">
+          <div class="example-card">
+            <h4>Shift-Left Implementation in CI/CD</h4>
+            <div class="example-code">
+              # GitHub Actions workflow example for shift-left testing
+              name: Shift-Left Pipeline
+              
+              on:
+                pull_request:
+                  branches: [ main, develop ]
+                
+              jobs:
+                requirements-validation:
+                  runs-on: ubuntu-latest
+                  steps:
+                    - uses: actions/checkout@v3
+                    - name: Validate requirements
+                      run: |
+                        npm install -g gherkin-lint
+                        gherkin-lint ./features/
+                
+                static-analysis:
+                  runs-on: ubuntu-latest
+                  steps:
+                    - uses: actions/checkout@v3
+                    - name: Run static analysis
+                      run: |
+                        npm install
+                        npm run lint
+                        npm run sonar
+                        
+                unit-tests:
+                  runs-on: ubuntu-latest
+                  steps:
+                    - uses: actions/checkout@v3
+                    - name: Run unit tests
+                      run: |
+                        npm install
+                        npm test -- --coverage
+            </div>
+          </div>
+          
+          <div class="example-card">
+            <h4>Digital Twin Testing Architecture</h4>
+            <div class="example-code">
+              // Digital Twin configuration for IoT system testing
+              const digitalTwinConfig = {
+                "simulationComponents": [
+                  {
+                    "name": "temperatureSensor",
+                    "type": "sensor",
+                    "properties": {
+                      "range": [-20, 80],
+                      "noiseModel": "gaussian",
+                      "failureRate": 0.001,
+                      "driftFactor": 0.05
+                    }
+                  },
+                  {
+                    "name": "hvacSystem",
+                    "type": "actuator",
+                    "properties": {
+                      "responseTime": 120,
+                      "powerConsumption": [0, 1500],
+                      "modes": ["off", "cool", "heat", "auto"]
+                    }
+                  }
+                ],
+                "environmentFactors": {
+                  "externalTemperature": {
+                    "profile": "dailyCycle",
+                    "range": [-10, 40]
+                  },
+                  "occupancy": {
+                    "profile": "workdayPattern",
+                    "maxOccupants": 100
+                  }
+                },
+                "testScenarios": [
+                  "normalOperation",
+                  "powerOutage",
+                  "sensorMalfunction",
+                  "networkLatency",
+                  "peakLoad"
+                ]
+              };
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Roles Section -->
+  <section id="ai-roles" class="fade-in">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">AI Roles & Prompt Engineering</h2>
+        <p class="section-subtitle">Specialized AI assistants for QA workflows</p>
+      </div>
+      
+      <div class="features-container">
+        <div class="feature-box">
+          <div class="feature-icon">
+            <i class="fas fa-file-code"></i>
+          </div>
+          <h3 class="feature-title">Test-Case Generator</h3>
+          <p class="feature-text">Converts user stories into Gherkin-style tests with comprehensive coverage.</p>
+          <button class="expand-button">See examples <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content">
+            <p>Test-Case Generators use NLP to transform plain-language requirements into structured test cases, saving QA teams up to 70% of test creation time.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Example Prompt</div>
+              <div class="example-code">
+                Given I have a user story:
+                "As a bank customer, I want to transfer money between my accounts so that I can manage my finances."
+                
+                Generate 5 Gherkin test scenarios covering happy path and edge cases.
+                Include scenarios for insufficient funds and daily transfer limits.
+              </div>
+              
+              <div class="example-title">Example Output</div>
+              <div class="example-code">
+                Feature: Money Transfer Between Accounts
+
+                Scenario: Successful transfer between checking and savings
+                  Given the user is logged into the banking app
+                  And the user has $1000 in checking account
+                  And the user has $500 in savings account
+                  When the user initiates a transfer of $200 from checking to savings
+                  Then the transfer should complete successfully
+                  And checking account balance should be $800
+                  And savings account balance should be $700
+                  
+                Scenario: Transfer attempt with insufficient funds
+                  Given the user is logged into the banking app
+                  And the user has $100 in checking account
+                  When the user attempts to transfer $200 from checking to savings
+                  Then the system should show an "Insufficient funds" error
+                  And no money should be transferred
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://github.com/cucumber/gherkin" class="service-link" target="_blank">
+                <i class="fab fa-github"></i> Gherkin Syntax
+              </a>
+              <a href="https://cucumber.io/" class="service-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Cucumber
+              </a>
+              <a href="https://www.atlassian.com/software/confluence" class="service-link" target="_blank">
+                <i class="fas fa-book"></i> Confluence Documentation
+              </a>
+            </div>
+            
+            <div class="example-block">
+              <div class="example-title">Confluence Integration</div>
+              <p>Automatically publish generated test cases to Confluence for team documentation:</p>
+              <div class="example-code">
+                // Confluence API Integration
+                const publishToConfluence = async (testCases, spaceKey, parentPageId) => {
+                  const confluenceApi = new ConfluenceClient({
+                    baseUrl: 'https://your-instance.atlassian.net/wiki',
+                    auth: {
+                      email: process.env.CONFLUENCE_EMAIL,
+                      apiToken: process.env.CONFLUENCE_API_TOKEN
+                    }
+                  });
+                  
+                  // Create formatted content from test cases
+                  const content = formatTestCasesAsConfluenceMarkup(testCases);
+                  
+                  // Publish to Confluence
+                  await confluenceApi.createPage({
+                    spaceKey: spaceKey,
+                    parentPageId: parentPageId,
+                    title: `Test Cases - ${new Date().toISOString().split('T')[0]}`,
+                    content
+                  });
+                };
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="feature-box">
+          <div class="feature-icon">
+            <i class="fas fa-bug"></i>
+          </div>
+          <h3 class="feature-title">Bug Summarizer</h3>
+          <p class="feature-text">Extracts logs, screenshots into concise reports with actionable insights.</p>
+          <button class="expand-button">See examples <i class="fas fa-chevron-down"></i></button>
+          <div class="card-expanded-content">
+            <p>Bug Summarizers analyze error logs, stack traces, and screenshots to create detailed yet concise bug reports, reducing triage time by 65% and improving first-time fix rates.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Example Input</div>
+              <div class="example-code">
+                Error log:
+                [ERROR] TypeError: Cannot read property 'length' of undefined
+                   at UserProfile.render (UserProfile.tsx:42)
+                   at ReactDOMComponent.mountComponent (react-dom.js:212)
+                   at ReactDOMRoot.render (react-dom.js:518)
+                   
+                Steps to reproduce:
+                1. Login as test@example.com
+                2. Navigate to profile page
+                3. Click on "View Activity"
+              </div>
+              
+              <div class="example-title">Example Output</div>
+              <div class="example-code">
+                Bug Summary: TypeError when accessing undefined property on UserProfile page
+                
+                Priority: High
+                Impact: User cannot view activity history
+                Root Cause: UserProfile.tsx line 42 - attempting to access .length on undefined user.activities array
+                
+                Reproduction:
+                1. Login as test@example.com
+                2. Navigate to profile page
+                3. Click on "View Activity"
+                
+                Fix Recommendation:
+                Add null check before accessing user.activities.length in UserProfile.tsx line 42:
+                const activitiesCount = user?.activities?.length || 0;
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://jira.atlassian.com/" class="service-link" target="_blank">
+                <i class="fab fa-jira"></i> Jira Issue Tracking
+              </a>
+              <a href="https://www.atlassian.com/software/confluence" class="service-link" target="_blank">
+                <i class="fas fa-book"></i> Confluence Documentation
+              </a>
+              <a href="https://sentry.io/" class="service-link" target="_blank">
+                <i class="fas fa-exclamation-triangle"></i> Sentry Error Monitoring
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="feature-box" id="analytics-reviewer-box">
+          <div class="feature-icon">
+            <i class="fas fa-chart-bar"></i>
+          </div>
+          <h3 class="feature-title">Analytics Reviewer</h3>
+          <p class="feature-text">Interprets flaky test trends and risk areas to prioritize testing efforts.</p>
+          <button class="expand-button" onclick="toggleContent('analytics-reviewer-content')">See examples <i class="fas fa-chevron-down"></i></button>
+          <div id="analytics-reviewer-content" class="card-expanded-content" style="display:none; position:relative; background-color:#fff; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin-top:15px; padding:20px;">
+            <p>Analytics Reviewers use machine learning to analyze test execution history, identifying patterns in test failures and prioritizing test efforts based on risk assessment. This role reduces testing time by up to 50% while maintaining quality standards.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Example Input</div>
+              <div class="example-code">
+                // Test execution history dataset (last 100 runs)
+                const testHistory = [
+                  {
+                    "testId": "user-auth-001",
+                    "module": "Authentication",
+                    "lastRuns": [1,1,1,0,1,1,1,1,1,1], // 1=pass, 0=fail
+                    "avgDuration": 1.2,
+                    "lastModified": "2025-01-05",
+                    "coverage": 0.85,
+                    "dependencies": ["db-auth", "oauth-service"]
+                  },
+                  {
+                    "testId": "cart-checkout-003",
+                    "module": "Checkout",
+                    "lastRuns": [1,0,1,0,1,0,1,0,1,0], // Flaky pattern
+                    "avgDuration": 3.5,
+                    "lastModified": "2025-03-10",
+                    "coverage": 0.72,
+                    "dependencies": ["payment-api", "inventory-service", "tax-calculator"]
+                  },
+                  // ...more tests
+                ]
+              </div>
+              
+              <div class="example-title">Example Output</div>
+              <div class="example-code">
+                Test Priority Report (2025-04-15)
+                
+                High-Risk Areas:
+                1. Checkout Module (7 flaky tests, 65% pass rate)
+                   - Root cause: Race condition in payment-api integration
+                   - Recommendation: Prioritize cart-checkout-003 test stabilization
+                
+                2. User Profile (3 failing tests after recent API change)
+                   - Affected components: profile-edit, avatar-upload
+                   - Impact: Critical - blocking 28% of user flows
+                
+                Optimization Opportunities:
+                - 12 redundant tests identified in Authentication module
+                - 8 slow tests (>5s) can be parallelized
+                
+                Code Changes with Highest Test Impact:
+                1. inventory-service.js (affects 15 tests)
+                2. payment-processor.js (affects 8 tests, 5 currently failing)
+                
+                AI-Generated Test Plan:
+                Run these 24 tests first to maximize risk coverage with minimal execution time.
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://github.com/microsoft/playwright/blob/main/packages/trace-viewer/README.md" class="service-link" target="_blank">
+                <i class="fab fa-github"></i> Playwright Trace Viewer
+              </a>
+              <a href="https://grafana.com/" class="service-link" target="_blank">
+                <i class="fas fa-chart-line"></i> Grafana Dashboards
+              </a>
+              <a href="https://about.codecov.io/" class="service-link" target="_blank">
+                <i class="fas fa-code-branch"></i> Codecov Analytics
+              </a>
+            </div>
+            
+            <div class="example-block">
+              <div class="example-title">Implementing Test Prioritization</div>
+              <p>Example of a prioritization algorithm that uses test history and impact analysis:</p>
+              <div class="example-code">
+                function prioritizeTests(tests, codeChanges) {
+                  return tests.map(test => {
+                    // Calculate flakiness score (0-1)
+                    const flakiness = calculateFlakiness(test.lastRuns);
+                    
+                    // Calculate change impact (0-1)
+                    const changeImpact = assessChangeImpact(test, codeChanges);
+                    
+                    // Calculate business criticality (0-1)
+                    const criticality = getBusinessCriticality(test.module);
+                    
+                    // Calculate execution cost (inverse of speed, 0-1)
+                    const executionCost = normalizeExecutionTime(test.avgDuration);
+                    
+                    // Calculate final priority score
+                    const priorityScore = (0.3 * flakiness) + 
+                                        (0.4 * changeImpact) + 
+                                        (0.2 * criticality) - 
+                                        (0.1 * executionCost);
+                    
+                    return {
+                      ...test,
+                      priorityScore,
+                      priorityReason: generateReason(flakiness, changeImpact, criticality)
+                    };
+                  }).sort((a, b) => b.priorityScore - a.priorityScore);
+                }
+              </div>
+            </div>
+            <button style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:24px; cursor:pointer;" onclick="toggleContent('analytics-reviewer-content')">×</button>
+          </div>
+        </div>
+        
+        <div class="feature-box" id="test-maintenance-box">
+          <div class="feature-icon">
+            <i class="fas fa-tools"></i>
+          </div>
+          <h3 class="feature-title">Test Maintenance Specialist</h3>
+          <p class="feature-text">Monitors flaky or outdated tests and applies fixes to maintain test health.</p>
+          <button class="expand-button" onclick="toggleContent('test-maintenance-content')">See examples <i class="fas fa-chevron-down"></i></button>
+          <div id="test-maintenance-content" class="card-expanded-content" style="display:none; position:relative; background-color:#fff; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin-top:15px; padding:20px;">
+            <p>Test Maintenance Specialists identify and automatically repair failing or flaky tests, reducing maintenance overhead by 60%. They use machine learning to understand test failures, suggest fixes, and adapt to UI/API changes.</p>
+            
+            <div class="example-block">
+              <div class="example-title">Example Input</div>
+              <div class="example-code">
+                // Failing test with error details
+                {
+                  "testId": "productSearch-004",
+                  "framework": "Cypress",
+                  "error": {
+                    "message": "Timed out retrying after 10000ms: Expected to find element '.search-result-item', but never found it.",
+                    "stack": "at productSearchSpec.js:45:8",
+                    "screenshotUrl": "https://test-artifacts.example.com/failures/20250410/search-timeout.png"
+                  },
+                  "history": {
+                    "lastPassedOn": "2025-03-15",
+                    "lastPassedVersion": "v2.5.0",
+                    "failurePattern": "intermittent"
+                  },
+                  "codeChanges": [
+                    {
+                      "file": "components/SearchResults.jsx",
+                      "commitId": "a7c4e9d",
+                      "date": "2025-04-01",
+                      "changes": {
+                        "classChanges": {
+                          "oldSelector": ".search-result-item",
+                          "newSelector": ".product-card"
+                        }
+                      }
+                    }
+                  ]
+                }
+              </div>
+              
+              <div class="example-title">Example Output</div>
+              <div class="example-code">
+                Test Fix Recommendation: productSearch-004
+                
+                Problem Type: Selector Change
+                Root Cause: CSS class renamed from '.search-result-item' to '.product-card' in commit a7c4e9d
+                
+                Suggested Fix:
+                ```js
+                // Replace in productSearchSpec.js line 45
+                cy.get('.search-result-item').should('be.visible')
+                
+                // With:
+                cy.get('.product-card').should('be.visible')
+                ```
+                
+                Additional Recommendations:
+                1. Add data-testid attributes to make tests more resilient to styling changes
+                2. Create a shared selectors file to centralize selector management
+                3. Add waiting strategy to handle slow-loading search results:
+                
+                ```js
+                cy.get('.product-card', { timeout: 15000 })
+                  .should('be.visible')
+                  .should('have.length.at.least', 1)
+                ```
+                
+                Auto-fix applied: YES
+                Fixed successfully: YES (verified in run #8872)
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+              <a href="https://github.com/testim-io/root-cause" class="service-link" target="_blank">
+                <i class="fab fa-github"></i> Root Cause Analysis
+              </a>
+              <a href="https://applitools.com/platform/root-cause-analysis/" class="service-link" target="_blank">
+                <i class="fas fa-search"></i> Visual AI Debugging
+              </a>
+              <a href="https://www.lambdatest.com/smart-testing" class="service-link" target="_blank">
+                <i class="fas fa-wrench"></i> Auto-healing Tests
+              </a>
+            </div>
+            
+            <div class="example-block">
+              <div class="example-title">Implementing Self-Healing Tests</div>
+              <p>Example of a self-healing mechanism for web UI tests:</p>
+              <div class="example-code">
+                class SmartElementFinder {
+                  constructor(originalSelector, context) {
+                    this.originalSelector = originalSelector;
+                    this.context = context;
+                    this.alternativeSelectors = [];
+                    this.generateAlternativeSelectors();
+                  }
+                  
+                  generateAlternativeSelectors() {
+                    // Generate fallback selectors using various strategies
+                    if (this.originalSelector.startsWith('#')) {
+                      // ID-based selector, try adding data attributes as backups
+                      const id = this.originalSelector.substring(1);
+                      this.alternativeSelectors.push(`[data-testid="${id}"]`);
+                      this.alternativeSelectors.push(`[aria-label*="${id}"]`);
+                    } else if (this.originalSelector.startsWith('.')) {
+                      // Class-based selector, try fuzzy matching similar classes
+                      const className = this.originalSelector.substring(1);
+                      this.alternativeSelectors.push(`[class*="${className}"]`);
+                      // Try nearest text match if context provides clues
+                      if (this.context?.nearbyText) {
+                        this.alternativeSelectors.push(
+                          `//*[contains(text(),"${this.context.nearbyText}")]/following::*`
+                        );
+                      }
+                    }
+                    // Add AI-generated selectors based on visual recognition
+                    if (this.context?.screenshot) {
+                      this.alternativeSelectors.push("AI-VISUAL-SELECTOR");
+                    }
+                  }
+                  
+                  async findElement() {
+                    try {
+                      // Try original selector first
+                      const element = await driver.findElement(this.originalSelector);
+                      return { element, usedSelector: this.originalSelector, healingApplied: false };
+                    } catch (error) {
+                      // Try alternatives if original fails
+                      for (const selector of this.alternativeSelectors) {
+                        try {
+                          const element = await driver.findElement(selector);
+                          this.learnSuccessfulSelector(selector); // Remember what worked
+                          return { element, usedSelector: selector, healingApplied: true };
+                        } catch (innerError) {
+                          // Continue to next alternative
+                        }
+                      }
+                      throw new Error(`Element not found with any selector strategy`);
+                    }
+                  }
+                  
+                  learnSuccessfulSelector(workingSelector) {
+                    // Send telemetry to learning system to improve future attempts
+                    TestHealingService.reportSuccessfulHealing(
+                      this.originalSelector, 
+                      workingSelector,
+                      this.context
+                    );
+                  }
+                }
+              </div>
+            </div>
+            <button style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:24px; cursor:pointer;" onclick="toggleContent('test-maintenance-content')">×</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="code-block">
+        <div class="code-title">Prompt Engineering Tips</div>
+        <div class="code-content">
+          <p><span class="code-comment"># Structure your prompts like this:</span></p>
+          <p><span class="code-highlight">Given</span> I need to test <span class="code-highlight">[feature]</span> on <span class="code-highlight">[platform]</span></p>
+          <p><span class="code-highlight">With</span> <span class="code-highlight">[security level]</span> and <span class="code-highlight">[performance requirements]</span></p>
+          <p><span class="code-highlight">When</span> using <span class="code-highlight">[testing framework]</span> with <span class="code-highlight">[language]</span></p>
+          <p><span class="code-highlight">Then</span> generate <span class="code-highlight">[number]</span> test cases covering <span class="code-highlight">[edge cases]</span></p>
+          <p><span class="code-highlight">Format</span> output as <span class="code-highlight">[Gherkin/JSON/CSV]</span></p>
+        </div>
+      </div>
+      
+      <div class="list-container">
+        <h3 class="list-title">Big Tech Mandates</h3>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Google's TEST Framework:</span> Traceability, Explainability, Security, and Thresholds for AI-assisted testing.</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">AWS QyrusAI Principles:</span> Test data anonymization, model version control, human-in-the-loop gates, and continuous ethics monitoring.</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Microsoft's Responsible AI:</span> Fairness, reliability, safety, privacy, inclusiveness, transparency, and accountability.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Tools Section -->
+  <section id="top-tools" class="fade-in">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Top 5 QA Tools – 2025</h2>
+        <p class="section-subtitle">Essential tools for modern quality assurance</p>
+      </div>
+      
+      <div class="table-container">
+        <h3 style="padding: 1rem; background: #f8fafc; border-bottom: 1px solid #e5e7eb;">Manual QA Tools</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Key Strength</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://www.testrail.com/" target="_blank">TestRail AI Analytics</a></td>
+              <td>Real-time dashboards and CI/CD integration</td>
+            </tr>
+            <tr>
+              <td><a href="https://www.globalapptesting.com/" target="_blank">GlobalApp Testing AR</a></td>
+              <td>Real-world device feedback in 190+ countries</td>
+            </tr>
+            <tr>
+              <td><a href="https://www.tricentis.com/products/qtest/" target="_blank">qTest MindMapper</a></td>
+              <td>Agile workflow support, exploratory testing</td>
+            </tr>
+            <tr>
+              <td><a href="https://www.practitest.com/" target="_blank">PractiTest RiskMatrix</a></td>
+              <td>Unified traceability with requirements</td>
+            </tr>
+            <tr>
+              <td><a href="https://marketplace.atlassian.com/apps/1014681/zephyr-squad-test-management-for-jira" target="_blank">Zephyr Jira AI Assistant</a></td>
+              <td>Enterprise test tracking + Jira integration</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="table-container">
+        <h3 style="padding: 1rem; background: #f8fafc; border-bottom: 1px solid #e5e7eb;">Automated QA Tools</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>AI Features</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://www.testim.io/" target="_blank">Testim Cortex</a></td>
+              <td>Generative AI for self-healing scripts</td>
+            </tr>
+            <tr>
+              <td><a href="https://applitools.com/" target="_blank">Applitools Ultraviolet</a></td>
+              <td>Visual-AI for UI regression detection</td>
+            </tr>
+            <tr>
+              <td><a href="https://www.functionize.com/" target="_blank">Functionize Neuro</a></td>
+              <td>ML test generation and analysis</td>
+            </tr>
+            <tr>
+              <td><a href="https://www.mabl.com/" target="_blank">Mabl Quantum</a></td>
+              <td>Low-code testing with smart adaptation</td>
+            </tr>
+            <tr>
+              <td><a href="https://test.ai/" target="_blank">Test.ai Orion</a></td>
+              <td>End-to-end AI-based functional testing</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="table-container">
+        <h3 style="padding: 1rem; background: #f8fafc; border-bottom: 1px solid #e5e7eb;">Cross-Cutting Services</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Unique Feature</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://aws.amazon.com/device-farm/" target="_blank">AWS TestGrid Pro</a></td>
+              <td>Serverless device testing at scale</td>
+            </tr>
+            <tr>
+              <td><a href="https://azure.microsoft.com/en-us/products/devops/test-plans" target="_blank">Azure Testing Hub</a></td>
+              <td>Integrated DevOps pipeline testing</td>
+            </tr>
+            <tr>
+              <td><a href="https://cloud.google.com/ai-platform" target="_blank">GCP AI Test Lab</a></td>
+              <td>End-to-end testing with ML recommendations</td>
+            </tr>
+            <tr>
+              <td><a href="https://saucelabs.com/" target="_blank">Sauce Labs AI</a></td>
+              <td>Cross-browser visual comparison</td>
+            </tr>
+            <tr>
+              <td><a href="https://www.browserstack.com/" target="_blank">BrowserStack Neural</a></td>
+              <td>Real device cloud with predictive fixes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="list-container">
+        <h3 class="list-title">Critical Skills for QA Engineers</h3>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">AI Model Fine-Tuning:</span> LoRA adapters for domain-specific test generation</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Prompt Chaining:</span> Building complex workflows through sequential AI prompts</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Ethical AI Certification:</span> IEEE/ISO standards for responsible test automation</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Performance Budget Management:</span> Optimizing test resources for maximum coverage</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span><span class="feature-name">Cross-Platform Test Orchestration:</span> Managing tests across web, mobile, and APIs</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>QA.AI 2025</h3>
+          <p style="color: #cbd5e0; margin-bottom: 1rem;">The future of AI-assisted testing for web, mobile, and desktop applications.</p>
+          <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <a href="#" style="color: white; font-size: 1.2rem;"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color: white; font-size: 1.2rem;"><i class="fab fa-linkedin"></i></a>
+            <a href="#" style="color: white; font-size: 1.2rem;"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Resources</h3>
+          <ul class="footer-links">
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Whitepapers</a></li>
+            <li><a href="#">API Reference</a></li>
+            <li><a href="#">Case Studies</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#manual">Manual QA</a></li>
+            <li><a href="#automated">Automated QA</a></li>
+            <li><a href="#workflows">Workflows</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Contact</h3>
+          <ul class="footer-links">
+            <li><a href="mailto:info@qaai2025.com">info@qaai2025.com</a></li>
+            <li><a href="tel:+12345678910">+1 (234) 567-8910</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 QA.AI. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Existing code for card expansion
+      let activeCard = null;
+      
+      // Handle all card "Learn more" buttons
+      document.querySelectorAll('.card .expand-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const card = this.closest('.card');
+          const expanded = this.nextElementSibling;
+          
+          if (expanded.style.display === 'none' || expanded.style.display === '') {
+            // Close any previously opened content first
+            document.querySelectorAll('.card .card-expanded-content').forEach(content => {
+              if (content !== expanded && content.style.display === 'block') {
+                content.style.display = 'none';
+                content.previousElementSibling.classList.remove('active');
+                content.previousElementSibling.innerHTML = 'Learn more <i class="fas fa-chevron-down"></i>';
+              }
+            });
+            
+            // Open this content
+            expanded.style.display = 'block';
+            this.classList.add('active');
+            this.innerHTML = 'Close <i class="fas fa-chevron-up"></i>';
+            
+            // Scroll to make sure the expanded content is visible
+            setTimeout(() => {
+              expanded.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+          } else {
+            // Close this content
+            expanded.style.display = 'none';
+            this.classList.remove('active');
+            this.innerHTML = 'Learn more <i class="fas fa-chevron-down"></i>';
+          }
+        });
+      });
+      
+      // Implementation examples toggle
+      const examplesButton = document.getElementById('examples-expand-button');
+      const examplesContent = document.getElementById('implementation-examples-content');
+      const aiRolesSection = document.getElementById('ai-roles');
+      
+      if (examplesButton && examplesContent) {
+        examplesButton.addEventListener('click', function() {
+          if (!examplesContent.classList.contains('active')) {
+            // Expand
+            examplesContent.style.display = 'block';
+            // Use setTimeout to ensure display:block is applied before adding active class
+            setTimeout(() => {
+              examplesContent.classList.add('active');
+            }, 10);
+            this.innerHTML = 'Show Less <i class="fas fa-chevron-up"></i>';
+            this.classList.add('active');
+            
+            // Add margin to push content down
+            if (aiRolesSection) {
+              aiRolesSection.style.marginTop = '30px';
+              // Smooth scroll to see the content
+              setTimeout(() => {
+                examplesContent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }, 300);
+            }
+          } else {
+            // Collapse
+            examplesContent.classList.remove('active');
+            // Use setTimeout to allow animation to complete before hiding
+            setTimeout(() => {
+              examplesContent.style.display = 'none';
+            }, 300);
+            this.innerHTML = 'Show More <i class="fas fa-chevron-down"></i>';
+            this.classList.remove('active');
+            
+            // Remove extra margin
+            if (aiRolesSection) {
+              aiRolesSection.style.marginTop = '0';
+            }
+          }
+        });
+      }
+    });
+    
+    // ... existing code ...
+  </script>
+</body>
+</html>

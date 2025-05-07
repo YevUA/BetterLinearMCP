@@ -245,3 +245,38 @@ The server uses stdio for communication and implements the Model Context Protoco
 ## License
 
 MIT
+
+## Custom Scripts
+
+This repository includes custom utility scripts to help you interact with the Linear API. These scripts demonstrate common use cases and can be modified to suit your needs.
+
+### Available Scripts
+
+- `scripts/test.js` - A basic test script to verify the Linear API connection
+- `scripts/create_test_ticket.js` - Creates a test ticket with a comment
+- `scripts/find_qa_tickets.js` - Finds all tickets in QA status
+- `scripts/my_issues.js` - Lists all issues assigned to the current user
+- `scripts/team_issues.js` - Lists all active issues for a specific team
+
+For more details, see the [scripts/README.md](scripts/README.md) file.
+
+### Running Scripts
+
+Use the provided helper script to easily run any of the custom scripts:
+
+```bash
+./run_script.sh script_name [args]
+```
+
+For example:
+
+```bash
+./run_script.sh my_issues
+./run_script.sh team_issues stonkd
+```
+
+Or run them directly with Node.js:
+
+```bash
+LINEAR_API_KEY=your-api-key node scripts/script_name.js
+```
