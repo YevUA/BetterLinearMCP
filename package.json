@@ -1,11 +1,10 @@
 {
-  "name": "@ibraheem4/linear-mcp",
-  "version": "78.0.1",
+  "name": "agency-linear",
+  "version": "1.0.0",
   "description": "A Linear MCP server for interacting with Linear's API",
   "type": "module",
   "bin": {
-    "@ibraheem4/linear-mcp": "./build/index.js",
-    "linear-mcp": "./build/index.js"
+    "agency-linear": "./build/index.js"
   },
   "files": [
     "build"
@@ -33,17 +32,16 @@
     "mcp",
     "model-context-protocol",
     "cli",
-    "roo",
-    "cline",
+    "agency",
+    "linear-api",
     "cursor",
-    "windsurf",
     "claude"
   ],
-  "author": "Ibraheem Abdul-Malik",
+  "author": "YevUA <yevhenii.m@gojilabs.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ibraheem4/linear-mcp"
+    "url": "https://github.com/YevUA/agency-linear"
   },
   "publishConfig": {
     "access": "public"
