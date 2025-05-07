@@ -1,6 +1,6 @@
 {
   "name": "agency-linear",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Linear MCP server for interacting with Linear's API",
   "type": "module",
   "bin": {
