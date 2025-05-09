@@ -918,24 +918,36 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "list_teams": {
-        const query = await linearClient.teams();
-        const teams = await Promise.all(
-          (query as any).nodes.map(async (team: any) => ({
-            id: team.id,
-            name: team.name,
-            key: team.key,
-            description: team.description,
-          }))
-        );
+        // Use GraphQL directly to make sure we only get teams the API key has access to
+        const query = `
+          query {
+            teams {
+              nodes {
+                id
+                name
+                key
+                description
+              }
+            }
+          }
+        `;
 
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(teams, null, 2),
-            },
-          ],
-        };
+        try {
+          const result = await linearClient.client.rawRequest(query);
+          const teams = (result.data as any)?.teams?.nodes || [];
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(teams, null, 2),
+              },
+            ],
+          };
+        } catch (error: any) {
+          console.error("Error listing teams:", error);
+          throw new Error(`Failed to list teams: ${error.message}`);
+        }
       }
 
       case "list_projects": {
