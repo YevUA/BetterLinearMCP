@@ -918,15 +918,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "list_teams": {
-        // Use GraphQL directly to make sure we only get teams the API key has access to
+        // Use the viewer-based query to get only teams the current user has access to
         const query = `
           query {
-            teams {
-              nodes {
-                id
-                name
-                key
-                description
+            viewer {
+              teams {
+                nodes {
+                  id
+                  name
+                  key
+                  description
+                }
               }
             }
           }
@@ -934,7 +936,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
         try {
           const result = await linearClient.client.rawRequest(query);
-          const teams = (result.data as any)?.teams?.nodes || [];
+          const teams = (result.data as any)?.viewer?.teams?.nodes || [];
           
           return {
             content: [
