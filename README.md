@@ -146,10 +146,15 @@ The assistant will automatically use the MCP tools to interact with Linear.
 - `update_comment` - Update an existing comment
 
 ### Team Management
-- `list_teams` - List all teams
+- `list_teams` - List all teams that the current user is a member of
+- `list_all_teams` - List all teams accessible by the API key, including those where the user isn't a member
 - `create_team` - Create a new team
 - `update_team` - Update an existing team
 - `delete_team` - Delete or archive a team
+
+### Issue Search and Reporting
+- `search_issues` - Search for issues using text queries
+- `search_team_issues` - Search for issues in a specific team regardless of user membership, supporting advanced filters like type, status, date, and assignee
 
 ### Project Management
 - `list_projects` - List all projects

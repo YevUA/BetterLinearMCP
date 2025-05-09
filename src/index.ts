@@ -70,6 +70,8 @@ const server = new Server(
         create_project_milestone: true,
         update_project_milestone: true,
         delete_project_milestone: true,
+        list_all_teams: true,
+        search_team_issues: true,
       },
     },
   }
@@ -187,10 +189,30 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     },
     {
       name: "list_teams",
-      description: "List all teams in the workspace",
+      description: "List teams that the current user is a member of",
       inputSchema: {
         type: "object",
-        properties: {},
+        properties: {
+          random_string: {
+            type: "string",
+            description: "Dummy parameter for no-parameter tools",
+          },
+        },
+        required: ["random_string"],
+      },
+    },
+    {
+      name: "list_all_teams",
+      description: "List all teams accessible by API key, including those where the user isn't a member",
+      inputSchema: {
+        type: "object",
+        properties: {
+          random_string: {
+            type: "string",
+            description: "Dummy parameter for no-parameter tools",
+          },
+        },
+        required: ["random_string"],
       },
     },
     {
@@ -661,6 +683,28 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: ["milestoneId"],
       },
     },
+    {
+      name: "search_team_issues",
+      description: "Search for issues in a specific team",
+      inputSchema: {
+        type: "object",
+        properties: {
+          teamId: {
+            type: "string",
+            description: "Team ID to search issues in",
+          },
+          query: {
+            type: "string",
+            description: "Search query text (optional)",
+          },
+          first: {
+            type: "number",
+            description: "Number of results to return (default: 50, max: 250)",
+          },
+        },
+        required: ["teamId"],
+      },
+    },
   ],
 }));
 
@@ -820,6 +864,16 @@ type DeleteProjectMilestoneArgs = {
   milestoneId: string;
 };
 
+type ListAllTeamsArgs = {
+  random_string: string;
+};
+
+type SearchTeamIssuesArgs = {
+  teamId: string;
+  query?: string;
+  first?: number;
+};
+
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (request.params.name) {
@@ -949,6 +1003,39 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         } catch (error: any) {
           console.error("Error listing teams:", error);
           throw new Error(`Failed to list teams: ${error.message}`);
+        }
+      }
+
+      case "list_all_teams": {
+        // Use the organization query to get all teams that the API key has access to
+        const query = `
+          query {
+            teams {
+              nodes {
+                id
+                name
+                key
+                description
+              }
+            }
+          }
+        `;
+
+        try {
+          const result = await linearClient.client.rawRequest(query);
+          const teams = (result.data as any)?.teams?.nodes || [];
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(teams, null, 2),
+              },
+            ],
+          };
+        } catch (error: any) {
+          console.error("Error listing all teams:", error);
+          throw new Error(`Failed to list all teams: ${error.message}`);
         }
       }
 
@@ -1379,7 +1466,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         if (args?.teamId) filter.team = { id: { eq: args.teamId } };
 
         const query = `
-          query Labels($first: Int, $filter: IssueFilterInput) {
+          query Labels($first: Int, $filter: IssueLabelFilter) {
             issueLabels(first: $first, filter: $filter) {
               nodes {
                 id
@@ -2273,6 +2360,254 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           };
         } catch (error: any) {
           throw new Error(`Failed to delete project milestone: ${error.message}`);
+        }
+      }
+
+      case "search_team_issues": {
+        const args = request.params.arguments as unknown as SearchTeamIssuesArgs;
+        if (!args?.teamId) {
+          throw new Error("Team ID is required");
+        }
+
+        // Use a direct GraphQL query to bypass user membership restrictions
+        const query = `
+          query IssueSearch($teamId: String!, $first: Int!, $filter: IssueFilter) {
+            team(id: $teamId) {
+              issues(first: $first, filter: $filter) {
+                nodes {
+                  id
+                  title
+                  identifier
+                  priority
+                  url
+                  createdAt
+                  creator {
+                    id
+                    name
+                    email
+                  }
+                  state {
+                    name
+                    type
+                  }
+                  assignee {
+                    id
+                    name
+                    email
+                  }
+                  labels {
+                    nodes {
+                      id
+                      name
+                      color
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `;
+
+        const variables: any = {
+          teamId: args.teamId,
+          first: Math.min(args?.first ?? 50, 250), // Limit to 250 max
+          filter: {},
+        };
+
+        // Parse the query string to add filters if provided
+        if (args.query) {
+          // Simple parsing of common Linear query patterns
+          const queryStr = args.query.toLowerCase();
+          
+          // Handle label filter
+          if (queryStr.includes('label:')) {
+            const labelMatches = queryStr.match(/label:(\w+)/g);
+            if (labelMatches && labelMatches.length > 0) {
+              // Extract all labels
+              const labels = labelMatches.map(match => {
+                const labelName = match.replace('label:', '');
+                return labelName.toLowerCase();
+              });
+              
+              // We'll filter labels in post-processing since Linear's API
+              // doesn't provide a great way to filter by multiple labels
+            }
+          }
+          
+          // Handle type filters more generally
+          if (queryStr.includes('type:')) {
+            const typeMatch = queryStr.match(/type:(\w+)/);
+            if (typeMatch && typeMatch[1]) {
+              const issueType = typeMatch[1];
+              
+              // Different handling based on issue type
+              if (issueType === 'bug') {
+                // For bugs, we'll use state type or check for bug labels later
+                variables.filter.state = {
+                  type: { eq: "unstarted" },
+                };
+              } else if (issueType === 'feature' || issueType === 'improvement') {
+                // For features, we could look for feature labels
+                // This is handled in post-processing
+              }
+              // Other types can be added here
+            }
+          }
+          
+          // Handle created date filter
+          if (queryStr.includes('created:>')) {
+            const dateMatch = queryStr.match(/created:>(\d+)\s*(\w+)/);
+            if (dateMatch && dateMatch[1] && dateMatch[2]) {
+              const amount = parseInt(dateMatch[1]);
+              const unit = dateMatch[2];
+              
+              const date = new Date();
+              if (unit.includes('day')) {
+                date.setDate(date.getDate() - amount);
+              } else if (unit.includes('week')) {
+                date.setDate(date.getDate() - (amount * 7));
+              } else if (unit.includes('month')) {
+                date.setMonth(date.getMonth() - amount);
+              } else if (unit.includes('year')) {
+                date.setFullYear(date.getFullYear() - amount);
+              }
+              
+              variables.filter.createdAt = { 
+                gt: date.toISOString() 
+              };
+            }
+          }
+          
+          // Handle status filter
+          if (queryStr.includes('status:')) {
+            const statusMatch = queryStr.match(/status:(\w+)/);
+            if (statusMatch && statusMatch[1]) {
+              variables.filter.state = {
+                name: { eq: statusMatch[1] }
+              };
+            }
+          }
+          
+          // Handle assignee filter
+          if (queryStr.includes('assignee:')) {
+            const assigneeMatch = queryStr.match(/assignee:(\w+)/);
+            if (assigneeMatch && assigneeMatch[1]) {
+              if (assigneeMatch[1].toLowerCase() === 'me') {
+                // Requires first getting the current user
+                const viewer = await linearClient.viewer;
+                variables.filter.assignee = {
+                  id: { eq: viewer.id }
+                };
+              } else if (assigneeMatch[1].toLowerCase() === 'none') {
+                variables.filter.assignee = {
+                  id: { eq: null }
+                };
+              }
+            }
+          }
+          
+          // Handle title/description search if no specific filters or additional terms exist
+          const searchTerms = queryStr
+            .replace(/type:\w+/g, '')
+            .replace(/created:>[^\\s]+/g, '')
+            .replace(/status:\w+/g, '')
+            .replace(/assignee:\w+/g, '')
+            .trim();
+            
+          if (searchTerms) {
+            variables.filter.title = { 
+              contains: searchTerms 
+            };
+          }
+        }
+
+        try {
+          const result = await linearClient.client.rawRequest(query, variables);
+          const issues = (result.data as any)?.team?.issues?.nodes || [];
+          
+          const formattedIssues = issues.map((issue: any) => {
+            // Get labels for better issue type identification
+            const labels = issue.labels?.nodes || [];
+            
+            // Check for bug or feature by label
+            const isBug = labels.some((label: any) => 
+              label.name.toLowerCase() === 'bug' || 
+              issue.title.toLowerCase().includes('bug') ||
+              issue.title.toLowerCase().includes('prod')
+            );
+            
+            const isFeature = labels.some((label: any) => 
+              label.name.toLowerCase() === 'feature' || 
+              label.name.toLowerCase() === 'enhancement' ||
+              label.name.toLowerCase() === 'improvement'
+            );
+            
+            const isStory = labels.some((label: any) => 
+              label.name.toLowerCase() === 'story'
+            );
+            
+            // Set issue type based on labels or state
+            let issueType = "task"; // default
+            if (isBug) issueType = "bug";
+            if (isFeature) issueType = "feature";
+            if (isStory) issueType = "story";
+            
+            // Filter by label if requested
+            if (args.query?.toLowerCase().includes('label:')) {
+              const labelMatches = args.query.toLowerCase().match(/label:(\w+)/g);
+              if (labelMatches && labelMatches.length > 0) {
+                const requestedLabels = labelMatches.map(match => match.replace('label:', '').toLowerCase());
+                
+                // Check if issue has any of the requested labels
+                const hasRequestedLabel = labels.some((label: any) => 
+                  requestedLabels.includes(label.name.toLowerCase())
+                );
+                
+                if (!hasRequestedLabel) {
+                  return null;
+                }
+              }
+            }
+            
+            // Only filter by type if explicitly requested
+            if (args.query?.includes('type:') && 
+                ((args.query?.includes('type:bug') && !isBug) ||
+                 (args.query?.includes('type:feature') && !isFeature) ||
+                 (args.query?.includes('type:story') && !isStory))) {
+              return null;
+            }
+            
+            return {
+              id: issue.id,
+              identifier: issue.identifier,
+              title: issue.title,
+              status: issue.state?.name || "Unknown",
+              stateType: issue.state?.type || "Unknown",
+              assignee: issue.assignee?.name || "Unassigned",
+              creator: issue.creator?.name || "Unknown",
+              creatorEmail: issue.creator?.email || "Unknown",
+              priority: issue.priority,
+              url: issue.url,
+              createdAt: issue.createdAt,
+              labels: labels.map((label: any) => ({
+                name: label.name,
+                color: label.color
+              })),
+              issueType
+            };
+          }).filter(Boolean); // Remove null entries
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(formattedIssues, null, 2),
+              },
+            ],
+          };
+        } catch (error: any) {
+          console.error("Error searching team issues:", error);
+          throw new Error(`Failed to search team issues: ${error.message}`);
         }
       }
 
